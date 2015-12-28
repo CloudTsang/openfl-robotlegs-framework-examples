@@ -32,6 +32,7 @@ class InputViewMediator extends Mediator
 		var toDoItem:ToDoItem = new ToDoItem();
 		toDoItem.title = view.input.text;
 		toDoItem.done = false;
+		toDoModel.updateItem(toDoItem);
 		toDoModel.addItem(toDoItem);
 	}
 }

@@ -23,18 +23,21 @@ class DoneButtonMediator extends Mediator
 	override public function initialize():Void
 	{
 		view.initialize();
-		view.toDoItem.doneChange.add(updateTickVis);
-		updateTickVis(null);
+		toDoModel.onUpdateItem.add(OnUpdateItem);
+		OnUpdateItem(null);
 		view.addEventListener(MouseEvent.CLICK, OnClick);
+	}
+	
+	private function OnUpdateItem(toDoItem:ToDoItem):Void 
+	{
+		if (view.toDoItem == toDoItem || toDoItem == null) {
+			view.tick.visible = view.toDoItem.done;
+		}
 	}
 	
 	private function OnClick(e:MouseEvent):Void 
 	{
 		view.toDoItem.done = view.toDoItem.done ? false : true;
-	}
-	
-	private function updateTickVis(toDoItem:ToDoItem):Void
-	{
-		view.tick.visible = view.toDoItem.done;
+		toDoModel.updateItem(view.toDoItem);
 	}
 }

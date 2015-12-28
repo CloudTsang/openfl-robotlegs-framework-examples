@@ -1,5 +1,6 @@
 package com.imagination.todo.view.openfl.list.item;
 import com.imagination.todo.model.todo.items.ToDoItem;
+import com.imagination.todo.model.todo.ToDoModel;
 import com.imagination.todo.view.openfl.list.item.done.DoneButton;
 import com.imagination.todo.view.openfl.list.item.done.DoneButtonMediator;
 import com.imagination.todo.view.openfl.list.item.remove.RemoveButton;
@@ -17,6 +18,7 @@ class ListItemViewMediator extends Mediator
 {
 	@inject public var view:ListItemView;
 	@inject public var mediatorMap:IMediatorMap;
+	@inject public var toDoModel:ToDoModel;
 	
 	public function new() 
 	{
@@ -29,13 +31,14 @@ class ListItemViewMediator extends Mediator
 		mediatorMap.map(RemoveButton).toMediator(RemoveButtonMediator);
 		
 		view.initialize();
-		
-		view.toDoItem.doneChange.add(OnDoneStatusChange);
-		OnDoneStatusChange(null);
+		toDoModel.onUpdateItem.add(OnUpdateItem);
+		OnUpdateItem(null);
 	}
 	
-	private function OnDoneStatusChange(toDoItem:ToDoItem):Void 
+	private function OnUpdateItem(toDoItem:ToDoItem):Void 
 	{
-		view.toDoItem.done ? view.inactive() : view.active();
+		if (view.toDoItem == toDoItem || toDoItem == null) {
+			view.toDoItem.done ? view.inactive() : view.active();
+		}
 	}
 }

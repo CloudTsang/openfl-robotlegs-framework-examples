@@ -83,20 +83,20 @@ class ListViewMediator extends Mediator
 			if (filterModel.value == FilterModel.FILTER_ALL) {
 				listItemViews[i].visible = true;	
 				listItemViews[i].y = locY;
-				locY += (listItemViews[i].height + 5);
+				locY += 33;
 			}
 			else if (filterModel.value == FilterModel.FILTER_COMPLETED) {
 				if (listItemViews[i].toDoItem.done){
 					listItemViews[i].visible = true;	
 					listItemViews[i].y = locY;
-					locY += (listItemViews[i].height + 5);
+					locY += 33;
 				}
 			}
 			else if (filterModel.value == FilterModel.FILTER_ACTIVE) {
 				if (!listItemViews[i].toDoItem.done){
 					listItemViews[i].visible = true;	
 					listItemViews[i].y = locY;
-					locY += (listItemViews[i].height + 5);
+					locY += 33;
 				}
 			}
 		}
