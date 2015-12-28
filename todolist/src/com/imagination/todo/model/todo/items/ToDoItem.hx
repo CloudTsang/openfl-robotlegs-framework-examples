@@ -9,16 +9,16 @@ import msignal.Signal.Signal1;
 class ToDoItem
 {
 	public var title:String;
-	private var _done:Bool;
-	public var done(get, set):Bool;
-	public var doneChange = new Signal1<ToDoItem>();
+	public var done:Bool;
+	//public var done(get, set):Bool;
+	//public var doneChange = new Signal1<ToDoItem>();
 	
 	public function new() 
 	{
 		
 	}
 	
-	function get_done():Bool 
+	/*function get_done():Bool 
 	{
 		return _done;
 	}
@@ -29,6 +29,6 @@ class ToDoItem
 		_done = value;
 		doneChange.dispatch(this);
 		return value;
-	}
+	}*/
 	
 }

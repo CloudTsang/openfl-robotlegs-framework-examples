@@ -1,6 +1,9 @@
 package com.imagination.todo.model.todo;
+
+import com.imagination.delay.Delay;
 import com.imagination.todo.model.todo.items.ToDoItem;
 import msignal.Signal.Signal1;
+import openfl.net.SharedObject;
 
 /**
  * ...
@@ -18,28 +21,48 @@ class ToDoModel
 	public var numberOfCompletedItems(get, null):Int;
 	public var numberOfRemainingItems(get, null):Int;
 	
+	private var sharedObject:SharedObject;
+	
 	public function new() 
 	{
+		#if flash
+		untyped __global__["flash.net.registerClassAlias"]("ToDoItem", com.imagination.todo.model.todo.items.ToDoItem);
+		#end
 		
+		sharedObject = SharedObject.getLocal("ToDoItems");
+		var savedItems:Array<ToDoItem> = Reflect.getProperty(sharedObject.data, "savedItems");
+		if (savedItems != null) {
+			Delay.nextFrame(AddSavedItems, [savedItems]);
+		}
+	}
+	
+	private function AddSavedItems(savedItems:Array<ToDoItem>):Void
+	{
+		trace("savedItems.length = " + savedItems.length);
+		for (i in 0...savedItems.length) 
+		{
+			addItem(savedItems[i]);
+		}
 	}
 	
 	public function addItem(toDoItem:ToDoItem):Void
 	{
 		items.push(toDoItem);
-		toDoItem.doneChange.add(onUpdateItem.dispatch);
 		onNewItem.dispatch(toDoItem);
-		trace(toDoItem.title);
+		saveData();
 	}
 	
 	public function updateItem(toDoItem:ToDoItem):Void
 	{
-		var i = items.length;
+		var i = items.length - 1;
 		while (i >= 0) 
 		{
 			if (items[i] == toDoItem) {
 				onUpdateItem.dispatch(toDoItem);
 			}
+			i--;
 		}
+		saveData();
 	}
 	
 	public function removeItem(toDoItem:ToDoItem):Void
@@ -49,12 +72,12 @@ class ToDoModel
 		{
 			if (items[i] == toDoItem) {
 				var _toDoItem = items[i];
-				_toDoItem.doneChange.remove(onUpdateItem.dispatch);
 				items.splice(i, 1);
 				onRemoveItem.dispatch(_toDoItem);
 			}
 			i--;
 		}
+		saveData();
 	}
 	
 	public function clearComplete():Void
@@ -64,12 +87,18 @@ class ToDoModel
 		{
 			if (items[i].done) {
 				var _toDoItem = items[i];
-				_toDoItem.doneChange.remove(onUpdateItem.dispatch);
 				items.splice(i, 1);
 				onRemoveItem.dispatch(_toDoItem);
 			}
 			i--;
 		}
+		saveData();
+	}
+	
+	private function saveData():Void
+	{
+		sharedObject.setProperty("savedItems", items);
+		sharedObject.flush();
 	}
 	
 	private function get_numberOfItems():Int 

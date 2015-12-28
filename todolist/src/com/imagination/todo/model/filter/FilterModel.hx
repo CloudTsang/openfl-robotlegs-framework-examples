@@ -1,5 +1,6 @@
 package com.imagination.todo.model.filter;
 import msignal.Signal.Signal0;
+import openfl.net.SharedObject;
 
 /**
  * ...
@@ -17,9 +18,15 @@ class FilterModel
 	public var value(get, set):String;
 	public var change = new Signal0();
 	
+	private var sharedObject:SharedObject;
+	
 	public function new() 
 	{
-		
+		sharedObject = SharedObject.getLocal("FilterModel");
+		var savedValue:String = Reflect.getProperty(sharedObject.data, "savedValue");
+		if (savedValue != null) {
+			this.value = savedValue;
+		}
 	}
 	
 	private function get_value():String 
@@ -32,6 +39,8 @@ class FilterModel
 		if (_value == v) return v;
 		_value = v;
 		change.dispatch();
+		sharedObject.setProperty("savedValue", value);
+		sharedObject.flush();
 		return v;
 	}
 }
